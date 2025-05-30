@@ -8,16 +8,20 @@ import java.time.Duration;
 
 public class CooperativeSchedulingDemo {
     private static final Logger log = LoggerFactory.getLogger(CooperativeSchedulingDemo.class);
+
     static {
-        System.setProperty("jdk.VirtualThreadScheduler.parallelism","1");
-        System.setProperty("jdk.VirtualThreadScheduler.maxPoolSize","1");
+        System.setProperty("jdk.VirtualThreadScheduler.parallelism", "1");
+        System.setProperty("jdk.VirtualThreadScheduler.maxPoolSize", "1");
     }
+
     public static void main(String[] args) {
         var builder = Thread.ofVirtual();
         var t1 = builder.unstarted(() -> demo(1));
         var t2 = builder.unstarted(() -> demo(2));
+        var t3 = builder.unstarted(() -> demo(3));
         t1.start();
         t2.start();
+        t3.start();
         CommonUtil.sleep(Duration.ofSeconds(2));
     }
 
@@ -25,6 +29,9 @@ public class CooperativeSchedulingDemo {
         log.info("thread-{} started ", threadNumber);
         for (int i = 0; i < 10; i++) {
             log.info("thread-{}is printing {}, Thread: {}", threadNumber, i, Thread.currentThread());
+            if ((threadNumber == 1 && i % 2 == 0) || (threadNumber == 2)) {
+                Thread.yield();
+            }
         }
 
         log.info("thread-{} ended ", threadNumber);
