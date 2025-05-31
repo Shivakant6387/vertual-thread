@@ -12,6 +12,10 @@ public class Lec03RaceCondition {
     private static final Logger log = LoggerFactory.getLogger(Lec03RaceCondition.class);
     private static final List<Integer> list = new ArrayList<>();
 
+    static {
+        System.setProperty("jdk.tracePinnedThreads", "short");
+    }
+
     public static void main(String[] args) {
         Runnable runnable = () -> log.info("*** Test Message ***");
 //        demo(Thread.ofPlatform());
